@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101827">
+<title>کانفیگ‌یار | نسخه آزمایشی</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#151f31;--line:#29364c;--text:#edf3ff;--muted:#9eacc2;--accent:#4fd1b5}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#1c3150 0,var(--bg) 48%);font-family:Tahoma,Arial,sans-serif;color:var(--text);min-height:100vh;padding:24px 14px}
+main{max-width:520px;margin:0 auto}.brand{text-align:center;margin:12px 0 24px}.logo{width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,#4fd1b5,#3584dc);display:grid;place-items:center;margin:auto;font-size:27px;color:#071522;font-weight:bold}.brand h1{font-size:25px;margin:12px 0 6px}.brand p{color:var(--muted);font-size:13px;margin:0}
+.card{background:rgba(21,31,49,.96);border:1px solid var(--line);border-radius:20px;padding:18px;margin:14px 0;box-shadow:0 14px 35px #0003}
+.status{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:#e6b65b}
+h2{font-size:16px;margin:0 0 14px}.primary,.secondary{width:100%;border:0;border-radius:13px;padding:15px;font: bold 15px Tahoma;cursor:pointer}.primary{background:var(--accent);color:#06221e}.secondary{background:#26364e;color:var(--text);margin-top:10px}.primary:active,.secondary:active{transform:scale(.99)}
+.output{direction:ltr;text-align:left;white-space:pre-wrap;overflow-wrap:anywhere;background:#0b1321;border:1px solid var(--line);border-radius:12px;padding:14px;color:#c7d7ed;min-height:76px;font:12px/1.8 monospace}
+.note{font-size:12px;line-height:1.9;color:var(--muted);margin:12px 2px 0}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions button{font-size:13px;padding:13px 8px}
+#message{min-height:22px;text-align:center;color:var(--accent);font-size:12px;margin-top:10px}
+footer{text-align:center;color:#77869d;font-size:11px;margin:22px 0}
+</style>
+</head>
+<body>
+<main>
+ <header class="brand">
+  <div class="logo">ک</div>
+  <h1>کانفیگ‌یار</h1>
+  <p>نسخه آزمایشی رابط کاربری</p>
+ </header>
+
+ <section class="card">
+  <div class="status"><span class="dot"></span><span>حالت آزمایشی — اتصال به سرور فعال نیست</span></div>
+  <h2 style="margin-top:18px">دریافت اطلاعات اتصال</h2>
+  <button class="primary" id="newBtn">دریافت مورد آزمایشی جدید</button>
+  <p class="note">این دمو فقط عملکرد دکمه‌ها، نمایش متن و کپی‌کردن را آزمایش می‌کند. داده‌های زیر ساختگی‌اند و کانفیگ واقعی یا قابل اتصال نیستند.</p>
+ </section>
+
+ <section class="card">
+  <h2>مورد انتخاب‌شده</h2>
+  <div class="output" id="output">برای نمایش مورد آزمایشی، دکمه بالا را بزنید.</div>
+  <div class="actions">
+   <button class="secondary" id="copyBtn">کپی متن</button>
+   <button class="secondary" id="shareConfigBtn">اشتراک‌گذاری متن</button>
+  </div>
+  <div id="message" aria-live="polite"></div>
+ </section>
+
+ <section class="card">
+  <h2>اشتراک‌گذاری برنامه</h2>
+  <button class="secondary" id="shareAppBtn">اشتراک‌گذاری لینک این صفحه</button>
+  <p class="note">پس از انتشار فایل روی یک نشانی عمومی، همین دکمه می‌تواند لینک واقعی برنامه را برای دیگران بفرستد.</p>
+ </section>
+ <footer>کانفیگ‌یار • نمونه اولیه HTML • بدون جمع‌آوری اطلاعات شخصی</footer>
+</main>
+<script>
+const samples = [
+ 'DEMO-ITEM-001\\nاین متن نمونه و غیرقابل اتصال است.',
+ 'DEMO-ITEM-002\\nاین متن فقط برای آزمایش نمایش و کپی است.',
+ 'DEMO-ITEM-003\\nبرای اتصال واقعی باید از سرویس مجاز و معتبر استفاده شود.'
+];
+let index = -1;
+const output = document.getElementById('output');
+const message = document.getElementById('message');
+function say(t){message.textContent=t;setTimeout(()=>{message.textContent=''},2600)}
+document.getElementById('newBtn').addEventListener('click',()=>{
+ index=(index+1)%samples.length; output.textContent=samples[index]; say('مورد آزمایشی تازه نمایش داده شد.');
+});
+document.getElementById('copyBtn').addEventListener('click',async()=>{
+ if(index<0){say('اول یک مورد آزمایشی دریافت کنید.');return}
+ try{await navigator.clipboard.writeText(samples[index]);say('متن آزمایشی کپی شد.')}
+ catch(e){say('کپی خودکار در این مرورگر در دسترس نیست؛ متن را انتخاب و کپی کنید.')}
+});
+async function share(text){
+ try{if(navigator.share){await navigator.share({title:'کانفیگ‌یار',text});}
+ else{await navigator.clipboard.writeText(text);say('اشتراک‌گذاری در دسترس نیست؛ متن کپی شد.');}}
+ catch(e){say('اشتراک‌گذاری لغو شد یا پشتیبانی نمی‌شود.')}
+}
+document.getElementById('shareConfigBtn').addEventListener('click',()=>{
+ if(index<0){say('اول یک مورد آزمایشی دریافت کنید.');return}
+ share('نمونه آزمایشی کانفیگ‌یار:\\n'+samples[index]);
+});
+document.getElementById('shareAppBtn').addEventListener('click',()=>{
+ share('کانفیگ‌یار — نسخه آزمایشی: '+location.href);
+});
+</script>
+</body>
+</html>
